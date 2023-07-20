@@ -51,9 +51,23 @@ function getAvalMoves(location) {
   return nextMoveArray;
 }
 
+function searchTree(element, match) {
+  if (element.data[0] == match[0] && element.data[1] == match[1]) {
+    console.log(element);
+    return null;
+  } else if (element.descendants != null) {
+    let i;
+    let result = null;
+    for (i = 0; result == null && i < element.descendants.length; i++) {
+      result = searchTree(element.descendants[i], match);
+    }
+  }
+}
+
 class Knight {
   constructor(data) {
     this.data = data;
+    this.moves = 0;
     this.descendants = [];
   }
 }
@@ -69,12 +83,14 @@ class Board {
         let moves = getAvalMoves(arr[j]);
         for (let i = 0; i < moves.length; i++) {
           const knightnext = new Knight(moves[i]);
+          knightnext.moves = 2
           knight.descendants[j].descendants.push(knightnext);
         }
         for (let k = 0; k < moves.length; k++) {
           let moves2 = getAvalMoves(moves[k]);
           for (let i = 0; i < moves2.length; i++) {
             const knightnext = new Knight(moves2[i]);
+            knightnext.moves = 3
             knight.descendants[j].descendants[k].descendants.push(knightnext);
           }
         }
@@ -87,19 +103,22 @@ class Board {
 
     for (let i = 0; i < moves.length; i++) {
       const knightnext = new Knight(moves[i]);
+      knightnext.moves = 1
       knight.descendants.push(knightnext);
     }
 
     findDescendants(moves);
 
-    console.log(knight);
+    return knight;
   }
 }
 
 function knightMoves(start, end) {
   let board = new Board(start);
 
-  board.buildMoves(start);
+  knight = board.buildMoves(start);
+
+  searchTree(knight, end);
 }
 
-knightMoves([0, 0], [3, 3]);
+knightMoves([0, 0], [4, 3]);
