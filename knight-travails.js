@@ -54,6 +54,7 @@ function getAvalMoves(location) {
 class Knight {
   constructor(data) {
     this.data = data;
+    this.descendants = [];
   }
 }
 
@@ -63,7 +64,35 @@ class Board {
   }
 
   buildMoves(arr) {
-    console.log(getAvalMoves(arr));
+    function findDescendants(arr) {
+      for (let j = 0; j < arr.length; j++) {
+        let moves = getAvalMoves(arr[j]);
+        for (let i = 0; i < moves.length; i++) {
+          const knightnext = new Knight(moves[i]);
+          knight.descendants[j].descendants.push(knightnext);
+        }
+        for (let k = 0; k < moves.length; k++) {
+          let moves2 = getAvalMoves(moves[k]);
+          for (let i = 0; i < moves2.length; i++) {
+            const knightnext = new Knight(moves2[i]);
+            knight.descendants[j].descendants[k].descendants.push(knightnext);
+          }
+        }
+      }
+    }
+
+    const knight = new Knight(arr);
+
+    let moves = getAvalMoves(arr);
+
+    for (let i = 0; i < moves.length; i++) {
+      const knightnext = new Knight(moves[i]);
+      knight.descendants.push(knightnext);
+    }
+
+    findDescendants(moves);
+
+    console.log(knight);
   }
 }
 
